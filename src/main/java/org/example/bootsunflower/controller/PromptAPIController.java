@@ -1,0 +1,33 @@
+package org.example.bootsunflower.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.example.bootsunflower.dto.PromptForm;
+import org.example.bootsunflower.entity.Prompt;
+import org.example.bootsunflower.service.GeminiService;
+import org.example.bootsunflower.service.PromptService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/prompt")
+@RequiredArgsConstructor
+public class PromptAPIController {
+    private final PromptService promptService;
+    private final GeminiService geminiService;
+
+    @PostMapping
+    public ResponseEntity<Prompt> savePrompt(@RequestBody PromptForm promptForm) {
+        String result = geminiService.generate(promptForm.text());
+        Prompt data = promptService.savePrompt(
+                promptForm.text(),
+                result
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(data);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Prompt> getPrompt(@PathVariable("id") String id) {
+        return ResponseEntity.ok(promptService.getPromptById(id));
+    }
+}
