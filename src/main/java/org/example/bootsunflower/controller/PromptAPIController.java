@@ -9,15 +9,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//@Controller
 @RestController
 @RequestMapping("/api/prompt")
 @RequiredArgsConstructor
+@CrossOrigin
 public class PromptAPIController {
     private final PromptService promptService;
     private final GeminiService geminiService;
 
     @PostMapping
-    public ResponseEntity<Prompt> savePrompt(@RequestBody PromptForm promptForm) {
+    public ResponseEntity<Prompt> savePrompt(
+            @RequestBody PromptForm promptForm
+    ) {
         String result = geminiService.generate(promptForm.text());
         Prompt data = promptService.savePrompt(
                 promptForm.text(),
